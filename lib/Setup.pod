@@ -3,7 +3,7 @@ package Setup; # to make podweaver happy
 # VERSION
 
 1;
-# ABSTRACT: Specification for setup modules
+# ABSTRACT: Specification for setup module
 
 =head1 SPECIFICATION VERSION
 
