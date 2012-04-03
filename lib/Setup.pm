@@ -3,4 +3,4 @@ package Setup;
 # VERSION
 
 1;
-# ABSTRACT: Setup module
+# ABSTRACT: Specification for setup module
