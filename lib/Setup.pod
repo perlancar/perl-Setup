@@ -11,94 +11,34 @@ package Setup; # to make podweaver happy
 
 =head1 SPECIFICATION
 
-I use the C<Setup::> namespace for setup modules. A setup module is a normal
-Perl module that contains setup functions. A setup function is a normal Perl
-function (typically named I<setup_SOMETHING>). Setup functions are typically
-used in software installers and have these characteristics: they must be
-idempotent, they must support reverse/undo operation (for uninstallation or
-unsetup), and they must support dry run (simulation) mode. Additionally, they
-follow L<Rinci> specification, mainly that they return enveloped result. Please
-refer to the Rinci specification first for background reading.
+This is a specification for setup modules. Setup modules are normal Perl modules
+that live under the C<Setup::> namespace and contain setup functions. Setup
+functions are normal Perl subroutines, typically named with C<setup_> prefix
+(like C<setup_file>, C<setup_unix_user>, etc.) They are typically used for,
+well, setting up stuffs, like software installation, system setup, or
+configuration management.
 
-To B<setup> something means to set something into a desired state. For example,
-C<setup_file> in L<Setup::File> sets up a file with a specified permission mode,
-ownership, and content. If the file doesn't exist it will be created; if a
-directory exists instead, it will be removed and replaced with the file; if the
-file already exists but with incorrect permission/owner/content, it will be
-corrected. Another example is C<setup_unix_user> in L<Setup::Unix::User>, which
-will setup a Unix user, with the specified group membership.
+Setup functions must support these features: idempotency (useful for
+configuration management), transaction, undo/redo (useful for uninstallation of
+software), and dry-run/simulation mode (useful for debugging).
 
-If everything is already correct, nothing is done and the function should return
-304 status. In other words, setup function is idempotent. One should be able to
-run it multiple times safely to reach the desired state.
+Setup functions must follow L<Rinci> specification, since Rinci already
+specifies all of these functionalities. Setup functions should also be written
+with the helper L<Perinci::Sub::Undoable>, to make all Setup functions more
+consistent.
 
-A simulation (dry run) mode should also be supported as this is useful for
-testing. If you pass L<-dry_run> => 1 argument to the function, it should check
-states and report inconsistencies, but will modify nothing and return 200 status
-(or 304) immediately instead. See the C<dry_run> feature in L<Rinci::function>
-for more details on dry running.
-
-After the setup, the function returns undo data, which can be used to perform
-undo later. The undo data should be serializable and thus can be stored in
-persistent storage. To perform undo, the same setup function is called with the
-same arguments previously used during the C<do> phase, with additional argument
-C<-undo_data> containing the undo data. See the C<undo> feature in
-L<Rinci::function> for more details on the undo protocol. Undo will reverse all
-actions done by the function in the C<do> phase; for example, if a file was
-created by the function it will be deleted (if it hasn't changed since the
-creation), if an existing file's mode/ownership was changed, it will be
-restored, and so on.
-
-There could be various state changes between the time of do and undo; a file can
-be deleted or modified by other processes. The undo must be flexible enough so
-it can reverse whatever state changes the previous do phase did whenever it can,
-but not disrupt other processes' changes.
-
-After an undo, the function returns undo_data, which can be used to perform undo
-of undo (i.e., redo) later.
+As an additional note, aside from idempotency, the functions must also check for
+initial/original condition. There could be various state changes between the
+time of do and undo; a file can be deleted or modified by other processes. The
+undo must be flexible enough so it can reverse whatever state changes the
+previous do phase did whenever it can, but not disrupt other processes' changes.
 
 
-=head1 IMPLEMENTATION GUIDE
+=head1 SEE ALSO
 
-One is free to implement setup function in whatever way he wants, but here are
-some guidelines.
+L<Rinci> (specifically L<Rinci::function::Undo> and
+L<Rinci::function::Transaction>).
 
-Divide the setup process into a series of unit steps. For example, setting up a
-file is comprised of steps: create, chown, chmod. Or it can just be:
-set_content, chown, chmod, if the file already exists. Or: rm, create, chown,
-chmod, if a directory exists and must be removed first.
-
-To perform setup, begin with an empty list of steps and add necessary steps
-according to the current state. After the list is complete, perform each step
-sequentially.
-
-Each step should come with its own state checking and can be skipped if the
-desired state is already reached. After performing a step, we also add an undo
-step to the undo steps list. If an error is encountered in a step, we can
-perform a rollback, which basically means we perform the undo steps formed up to
-that point. (If error is encountered during rollback, we die.)
-
-After all steps have been done successfully, we return 200.
-
-=head2 Undo data
-
-Undo data should be a list of steps:
-
- [undo_step1, undo_step2, ...]
-
-Undo step is usually a command followed by a list of args, examples:
-
- ["reset"]
- ["rm", "file1"]
- ["do", "Setup::File::setup_file", {arg1=>..., arg2=>...}]
- ["undo", "Setup::File::setup_file", $args, $undo_data]
-
-Because undo data might be needed much later after it is generated (e.g. months
-or even years later when a software is finally uninstalled), please plan a
-stable list of commands and its arguments carefully, so a (much) newer version
-of the setup function module can still perform undo using undo data produced by
-the (much) older version. Existing commands should still be supported as long as
-possible, unless absolutely necessary that it is abandoned. Changes in the order
-of command arguments should also be kept minimal.
+L<Riap> (specifically L<Riap::Transaction>).
 
 =cut
