@@ -24,7 +24,7 @@ software), and dry-run/simulation mode (useful for debugging).
 
 Setup functions must follow L<Rinci> specification, since Rinci already
 specifies all of these functionalities. Setup functions should also be written
-with the helper L<Perinci::Sub::Undoable>, to make all Setup functions more
+with the helper L<Perinci::Sub::Gen::Undoable>, to make all Setup functions more
 consistent.
 
 As an additional note, aside from idempotency, the functions must also check for
@@ -40,5 +40,7 @@ L<Rinci> (specifically L<Rinci::function::Undo> and
 L<Rinci::function::Transaction>).
 
 L<Riap> (specifically L<Riap::Transaction>).
+
+L<Perinci::Sub::Gen::Undoable>.
 
 =cut
