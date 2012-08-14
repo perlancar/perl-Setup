@@ -18,29 +18,18 @@ functions are normal Perl subroutines, typically named with C<setup_> prefix
 well, setting up stuffs, like software installation, system setup, or
 configuration management.
 
-Setup functions must support these features: idempotency (useful for
-configuration management), transaction, undo/redo (useful for uninstallation of
-software), and dry-run/simulation mode (useful for debugging).
+Setup functions must have metadata, as specified in L<Rinci> specification.
 
-Setup functions must follow L<Rinci> specification, since Rinci already
-specifies all of these functionalities. Setup functions should also be written
-with the helper L<Perinci::Sub::Gen::Undoable>, to make all Setup functions more
-consistent.
+Setup functions must support transactions, as described in
+L<Rinci::function::Transaction>.
 
-As an additional note, aside from idempotency, the functions must also check for
-initial/original condition. There could be various state changes between the
-time of do and undo; a file can be deleted or modified by other processes. The
-undo must be flexible enough so it can reverse whatever state changes the
-previous do phase did whenever it can, but not disrupt other processes' changes.
+Setup functions should also be written with the helper module
+L<Perinci::Sub::Gen::Undoable>, to make all Setup functions more consistent.
 
-
-=head1 SEE ALSO
-
-L<Rinci> (specifically L<Rinci::function::Undo> and
-L<Rinci::function::Transaction>).
-
-L<Riap> (specifically L<Riap::Transaction>).
-
-L<Perinci::Sub::Gen::Undoable>.
+Aside from idempotency, setup functions must also check for acceptable initial
+condition. There could be various state changes between the time of do and undo
+action; a file can be deleted or modified by other processes. The undo action
+must be flexible enough so it can reverse whatever state changes the previous do
+phase did whenever it can, but not disrupt other processes' changes.
 
 =cut
