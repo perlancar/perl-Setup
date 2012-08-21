@@ -1,8 +1,15 @@
 Revision history for Setup
 
+1.0.3   2012-08-21 (SHARYANTO)
+
+        Follow Rinci 1.1.24. Simplify description (idempotency is implied by
+        transaction protocol). Remove requirement of using
+        Perinci::Sub::Gen::Undoable since it is now deprecated.
+
+
 1.0.2   2012-08-14 (SHARYANTO)
 
-        No functional changes. Simplify description. Follow Rinci 1.1.23.
+        No functional changes. Follow Rinci 1.1.23. Simplify description.
 
 
 1.0.1   2012-05-31 (SHARYANTO)
