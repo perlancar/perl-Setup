@@ -18,18 +18,14 @@ functions are normal Perl subroutines, typically named with C<setup_> prefix
 well, setting up stuffs, like software installation, system setup, or
 configuration management.
 
-Setup functions must have metadata, as specified in L<Rinci> specification.
+Setup functions MUST have metadata, as specified in L<Rinci> specification.
 
-Setup functions must support transactions, as described in
-L<Rinci::function::Transaction>.
+Setup functions MUST support transactions, as described in
+L<Rinci::Transaction>.
 
-Setup functions should also be written with the helper module
-L<Perinci::Sub::Gen::Undoable>, to make all Setup functions more consistent.
-
-Aside from idempotency, setup functions must also check for acceptable initial
-condition. There could be various state changes between the time of do and undo
-action; a file can be deleted or modified by other processes. The undo action
-must be flexible enough so it can reverse whatever state changes the previous do
-phase did whenever it can, but not disrupt other processes' changes.
+Since setup functions might be used in unsetup (uninstallation) of software
+months or even years after setup (installation), their interface should be
+stable. During setup, undo actions are recorded in transaction database and
+might be used years later.
 
 =cut
