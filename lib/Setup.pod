@@ -20,6 +20,8 @@ configuration management.
 
 Setup functions MUST have metadata, as specified in L<Rinci> specification.
 
+Setup function MUST use L<Log::Any> for logging.
+
 Setup functions MUST support transactions, as described in
 L<Rinci::Transaction>.
 
@@ -27,5 +29,27 @@ Since setup functions might be used in unsetup (uninstallation) of software
 months or even years after setup (installation), their interface should be
 stable. During setup, undo actions are recorded in transaction database and
 might be used years later.
+
+Setup function should log something like this in the C<check_state> phase when
+in dry-run mode, to give messages to user:
+
+ my $tx_action = $args{-tx_action};
+ my $dry_run   = $args{-dry_run};
+ if ($tx_action eq 'check_state') {
+     ...
+     $log->infof("(DRY) Trashing %s ...", $path);
+     return [200, "Path $path should be trashed", undef, {undo_actions=>\@u}];
+ }
+
+Setup function should log something like this when about to perform action in
+C<fix_state> phase:
+
+ # example 1: trashing a file
+ $log->infof("Trashing %s ...", $path);
+ $trash->trash($path);
+
+ # example 2: creating a user
+ $log->infof("Adding user %s ...", $user);
+ $res = add_user(user=>$user, ...);
 
 =cut
