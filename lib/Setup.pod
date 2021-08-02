@@ -24,7 +24,7 @@ interpreted as described in RFC 2119.
 
 Setup functions MUST have metadata, as specified in L<Rinci> specification.
 
-Setup function MUST use L<Log::Any> for logging.
+Setup function MUST use L<Log::ger> for logging.
 
 Setup functions MUST support transactions, as described in
 L<Rinci::Transaction>.
