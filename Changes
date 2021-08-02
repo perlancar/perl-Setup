@@ -1,3 +1,8 @@
+1.0.6   2021-08-02  Released-By: PERLANCAR; Urgency: medium
+
+	- Replace Log::Any with Log::ger.
+
+
 1.0.5   2015-09-09  Released-By: PERLANCAR
 
 	- No spec changes.
